@@ -1,26 +1,62 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import { Ingredient } from '../../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list.service';
 import { NgForm } from '@angular/forms'
+import { Subscription } from 'rxjs/Subscription'
 
 @Component({
   selector: 'app-shopping-edit',
   templateUrl: './shopping-edit.component.html',
   styleUrls: ['./shopping-edit.component.css']
 })
-export class ShoppingEditComponent implements OnInit {
+export class ShoppingEditComponent implements OnInit, OnDestroy {
 
+  @ViewChild('f') shoppingListForm: NgForm;
+  private subscription;
+  private editMode = false;
+  private editedItemIndex: number;
+  private editedItem: Ingredient;
 
   constructor(private shoppingListService: ShoppingListService) { }
 
   ngOnInit() {
+    this.subscription = this.shoppingListService.startedEditing.subscribe(
+      (index: number) => {
+        this.editedItemIndex = index;
+        this.editMode = true;
+        this.editedItem = this.shoppingListService.getIngredient(index);
+        this.shoppingListForm.setValue({
+          name: this.editedItem.name,
+          amount: this.editedItem.amount
+        })
+      }
+    )
   }
 
-  onAddItem(form: NgForm) {
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  onClear() {
+    this.editMode = false;
+    this.shoppingListForm.reset();
+  }
+
+  onDelete() {
+    this.shoppingListService.deleteIngredient(this.editedItemIndex);
+    this.onClear();
+  }
+
+  onSubmit(form: NgForm) {
     const value = form.value
     const newIngredient = new Ingredient(value.name, value.amount);
-    console.log("adding ingredient",newIngredient)
-    this.shoppingListService.addIngredient(newIngredient);
+    if (this.editMode) {
+      this.shoppingListService.updateIngredient(this.editedItemIndex, newIngredient);
+    } else {
+      this.shoppingListService.addIngredient(newIngredient);
+    }
+    this.editMode = false;
+    this.shoppingListForm.reset();
   }
 
 }
