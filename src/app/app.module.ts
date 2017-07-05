@@ -32,7 +32,8 @@ import { HomeComponent } from './home/home.component';
     HttpModule,
     AppRoutingModule,
     ShoppingListModule,
-    SharedModule
+    SharedModule,
+    AuthModule
   ],
   providers: [ShoppingListService, RecipeService, DataStorageService, AuthService, AuthGuard],
   bootstrap: [AppComponent]

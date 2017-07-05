@@ -4,7 +4,7 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { HomeComponent } from './home/home.component';
 
 const appRoutes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: HomeComponent, pathMatch: 'full'},
   { path: 'recipes', loadChildren: './recipes/recipes.module#RecipesModule'},
   { path: 'shopping-list', component: ShoppingListComponent},
 ]
