@@ -11,7 +11,7 @@ import { AuthService } from '../../auth/auth.service';
 export class HeaderComponent {
 
   constructor(private dataService: DataStorageService,
-              private authSerivce: AuthService) {}
+              private authService: AuthService) {}
 
   onSaveData() {
     this.dataService.storeRecipes().subscribe(
@@ -22,11 +22,17 @@ export class HeaderComponent {
   }
 
   onLogout() {
-    this.authSerivce.logout();
+    this.authService.logout();
   }
 
   onFetchData() {
     this.dataService.fetchRecipes();
   }
+
+  isAuthorized() {
+    return this.authService.isAuth();
+  }
+
+
 
 }
